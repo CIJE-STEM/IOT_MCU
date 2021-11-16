@@ -1,0 +1,138 @@
+/*
+
+Abstraction for display in the IoT display and monitors to allow for different displays to be used
+Ideally would use virtual methods but vtable overhead is going to be avoided for now
+
+*/
+
+#ifndef __IOT_DISPLAY_H__
+#define __IOT_DISPLAY_H__
+
+
+#if defined(__AVR__)
+#include <stdint.h>
+#else
+#include <cstdint>
+#endif
+
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define CHAR_WIDTH 6 //setTextSize(1) for cp427 gives 6x8
+#define CHAR_HEIGHT 8 
+/********GRAPHICS BITMAPS******************/
+// generated with https://javl.github.io/image2cpp/
+
+#define WIFI_HEIGHT   16
+#define WIFI_WIDTH    16
+const unsigned char bitmap_wifi [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0xf0, 0x38, 0x1c, 0x40, 0x02, 0x07, 0xe0, 0x18, 0x18, 
+	0x00, 0x00, 0x03, 0xc0, 0x04, 0x20, 0x00, 0x00, 0x01, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+
+#define CHECKMARK_HEIGHT   16
+#define CHECKMARK_WIDTH    16
+const unsigned char bitmap_checkmark [] PROGMEM = {
+	0x07, 0xe0, 0x1f, 0xf8, 0x3f, 0xfc, 0x7f, 0xfe, 0x7f, 0xfe, 0xff, 0xef, 0xff, 0xcf, 0xf3, 0x9f, 
+	0xf1, 0x3f, 0xf8, 0x7f, 0xfc, 0xff, 0x7f, 0xfe, 0x7f, 0xfe, 0x3f, 0xfc, 0x1f, 0xf8, 0x07, 0xe0
+};
+
+
+#define XSQR_HEIGHT 16
+#define XSQR_WIDTH 16
+
+const unsigned char bitmap_x_square [] PROGMEM = {
+	0x7f, 0xfe, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x84, 0x21, 0x82, 0x41, 0x81, 0x81, 
+	0x81, 0x81, 0x82, 0x41, 0x84, 0x21, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x80, 0x01, 0x7f, 0xfe
+};
+
+#define BATT_HEIGHT 16
+#define BATT_WIDTH 16
+const unsigned char bitmap_battery_full [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xf8, 0x80, 0x04, 0xbf, 0xf4, 0xbf, 0xf7, 
+	0xbf, 0xf7, 0xbf, 0xf4, 0x80, 0x04, 0x7f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+const unsigned char bitmap_battery_half [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xf8, 0x80, 0x04, 0xbe, 0x04, 0xbe, 0x07, 
+	0xbe, 0x07, 0xbe, 0x04, 0x80, 0x04, 0x7f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+const unsigned char bitmap_battery_empty [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xf8, 0x80, 0x04, 0x80, 0x04, 0x80, 0x07, 
+	0x80, 0x07, 0x80, 0x04, 0x80, 0x04, 0x7f, 0xf8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+const unsigned char bitmap_battery_charging [] PROGMEM = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc0, 0x7d, 0xb8, 0x83, 0x84, 0xb7, 0x84, 0xaf, 0xe7, 
+	0xaf, 0xc7, 0xa3, 0x94, 0x83, 0x04, 0x76, 0x78, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+class IOT_Display
+{
+public:
+
+enum class DisplayType {STARTUP,NORMAL,ERROR};
+
+//Rule of 5 (+1)
+IOT_Display();
+~IOT_Display()=default;
+IOT_Display(const IOT_Display& other) = delete;
+IOT_Display& operator=(const IOT_Display& other) = delete;
+IOT_Display(IOT_Display&& other) = delete;
+IOT_Display& operator=(IOT_Display&& other) = delete;
+
+
+//methods
+bool init(uint8_t i2c_address);
+void testBitmap();
+//prefect place for a template!!!!
+template<typename T>
+void display(DisplayType display_type, T data);
+
+private:
+//? declare a class that needs to pass arguments to contructor?? NOPE JUST NEED TO HAVE THE TYPE
+Adafruit_SSD1306 _display;
+
+};
+
+//Template functions included in header file to prevent linkage failure
+template<typename T>
+void IOT_Display::display(IOT_Display::DisplayType display_type, T data) {
+
+  switch(display_type){
+    case DisplayType::STARTUP: {
+      Serial.println("USING STARTUP");
+      Serial.print("Data: ");
+      Serial.println(data);
+
+      _display.clearDisplay();
+      _display.setCursor(0,0);
+      _display.print("Welcome,\nStarting Up.....");
+
+      _display.drawBitmap(SCREEN_WIDTH-BATT_WIDTH,SCREEN_HEIGHT-BATT_HEIGHT,bitmap_battery_half,BATT_WIDTH,BATT_HEIGHT,1);
+      _display.setCursor(SCREEN_WIDTH-(3*CHAR_WIDTH),SCREEN_HEIGHT-(BATT_HEIGHT+CHAR_HEIGHT));
+      _display.print("3V3"); //TODO: REPLACE WITH BATTERY CHARGE
+      _display.drawBitmap(0,SCREEN_HEIGHT-WIFI_HEIGHT, bitmap_wifi, WIFI_WIDTH, WIFI_HEIGHT, 1);
+      _display.setCursor(WIFI_WIDTH,SCREEN_HEIGHT-(WIFI_HEIGHT/2));
+      _display.print("...");
+      _display.display();
+      
+    } break;
+    case DisplayType::NORMAL: {
+      Serial.println("USING NORMAL");
+    } break;
+    default: {
+      //set display type to ERROR no matter what
+      display_type = DisplayType::ERROR;
+      Serial.println("USING ERROR");
+    } 
+  }
+  
+}
+
+#endif //__IOT_DISPLAY_H__
