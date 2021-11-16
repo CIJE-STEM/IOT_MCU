@@ -11,8 +11,8 @@
 
  IOT_WiFi IOT_WiFi;
  
- const char* WIFI_SSID = "MyAltice f4428c";
- const char* WIFI_PASSWORD = "75-umber-7962";
+ const char* WIFI_SSID = "YOUR_SSID";
+ const char* WIFI_PASSWORD = "YOUR_PASSWORD";
  
  void setup(){
 
