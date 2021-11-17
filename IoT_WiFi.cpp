@@ -87,6 +87,12 @@ bool IOT_WiFi::isConnected(){
   return WiFi.status() == WL_CONNECTED;
 }
 
+String IOT_WiFi::getMACAddress(){
+    return _mac_addr;
+  }
+
+
+
 bool IOT_WiFi::setTzOffsets(const long gmtOffset_sec, const long daylightOffset_sec){
     //TODO: add set checks
     

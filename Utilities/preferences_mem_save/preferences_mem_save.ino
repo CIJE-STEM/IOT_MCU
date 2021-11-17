@@ -5,8 +5,8 @@
 Preferences pref_mem;
 
 
-const char* ssid = "YOUR_SSID";
-const char* password = "YOUR_PASSWORD";
+const char* ssid = "MyAltice f4428c";
+const char* password = "75-umber-7962";
 
 void setup() {
 
