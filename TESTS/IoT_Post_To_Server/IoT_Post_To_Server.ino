@@ -5,6 +5,7 @@
 
 #include "IoT_WiFi.h"
 #include <string.h>
+#include <stdio.h>
 #define ANALOG_PIN 34
 
 IOT_WiFi IOT_WiFi; //initialize the IOT instance
@@ -14,8 +15,8 @@ struct Measurement {
   char timestamp[40];
   float value;
   char* units; // a measurement is meaningless without units. if it is miliVolts, then "mV", etc. 
-  char* measure_type; //e.g BATTERY, to help user catalog where this is from
-  char* mac_address; 
+  char* measurement_type; //e.g BATTERY, to help user catalog where this is from
+  char mac_address[20]; 
   char* ip_address;
   char* device_id;  // currently, this is self-identified. Use somehting that will be unique. 
   char* note; //OPTIONAL: any additional info that can be helpful in later analysis. 
@@ -50,16 +51,31 @@ void loop() {
   /*
    * PREPARE MEASUREMENTS FOR POSTING TO DB
    */
-  //measurement_now.timestamp=IOT_WiFi.getTime();
-  strcpy(measurement_now.timestamp,IOT_WiFi.getTime());
+  //measurement_now.timestamp=IOT_WiFi.getTime(); !! Doesn't work with const char* type
+  strcpy(measurement_now.timestamp,IOT_WiFi.getTime());//we can't directly assign timestamp in C-style strings. We have to make a copy if being safe. String copy, strcpy(destination, source) does this. 
   measurement_now.value=volts_now;
   measurement_now.units="V";
-  measurement_now.measure_type="POTENTIOMETER";
-  measurement_now.mac_address=(IOT_WiFi.getMACAddress()).c_str();
-  // most likely this device is on a local router, so sendign the local IP Address is useless. We will get this from the HTTP header on the other end
+  measurement_now.measurement_type="POTENTIOMETER";
+  strcpy(measurement_now.mac_address,IOT_WiFi.getMACAddress()); //same thing as in timestamp
+  // most likely this device is behind a local router, so sendign the local IP Address is useless. We will get this from the HTTP header on the other end
   measurement_now.device_id="CIJEJAY0001";
   measurement_now.note="TESTING FOR IOT SERVER";
    
   //post the data
-  
+  postData2Server("a route",measurement_now);
+  delay(1000);
+}
+
+bool postData2Server(const char* route, Measurement& measure){
+
+  //Build the JSON for sending
+  uint16_t json_size=1000;
+  char body_json[json_size];
+  snprintf(body_json,json_size,"{ \"timestamp\": \"%s\", \"value\":\"%f\", \"units\":\"%s\",\"measurement_type\":\"%s\", \ 
+  \"mac_addr\":\"%s\",\"device_id\":\"%s\",\"note\":\"%s\" }",measure.timestamp, measure.value, measure.units, measure.measurement_type,\
+  measure.mac_address,measure.device_id,measure.note);
+
+  Serial.print("JSON OUT ");Serial.println(body_json);
+
+  return true; //if successful return true
 }
