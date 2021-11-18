@@ -6,7 +6,6 @@ Soem stuff for WiFi
 
 #include <Preferences.h>
 #include <WiFi.h>
-#include <HTTPClient.h>
 #include <time.h>
 
 void IOT_WiFi::initWiFi(const char* WIFI_SSID, const char* WIFI_PASSWORD){
@@ -87,8 +86,8 @@ bool IOT_WiFi::isConnected(){
   return WiFi.status() == WL_CONNECTED;
 }
 
-String IOT_WiFi::getMACAddress(){
-    return _mac_addr;
+const char* IOT_WiFi::getMACAddress(){
+    return _mac_addr.c_str();
   }
 
 

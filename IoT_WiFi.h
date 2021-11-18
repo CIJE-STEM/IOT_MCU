@@ -51,7 +51,7 @@ IOT_WiFi& operator=(IOT_WiFi&& other) = delete;
   bool setTimeFormat(const char* new_time_fmt);
   bool setTzOffsets(const long gmtOffset_sec, const long daylightOffset_sec);
 
-  String getMACAddress();
+  const char* getMACAddress();
   
 private:
 
