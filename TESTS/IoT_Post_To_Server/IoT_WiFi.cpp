@@ -6,7 +6,6 @@ Soem stuff for WiFi
 
 #include <Preferences.h>
 #include <WiFi.h>
-#include <HTTPClient.h>
 #include <time.h>
 
 void IOT_WiFi::initWiFi(const char* WIFI_SSID, const char* WIFI_PASSWORD){
