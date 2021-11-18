@@ -6,6 +6,8 @@
 #include "IoT_WiFi.h"
 #include <string.h>
 #include <stdio.h>
+#include <HTTPClient.h>
+
 #define ANALOG_PIN 34
 
 IOT_WiFi IOT_WiFi; //initialize the IOT instance
@@ -62,20 +64,48 @@ void loop() {
   measurement_now.note="TESTING FOR IOT SERVER";
    
   //post the data
-  postData2Server("a route",measurement_now);
+  postData2Server("https://cije-basic-iot-server.glitch.me/measurements/",measurement_now);
   delay(1000);
 }
 
 bool postData2Server(const char* route, Measurement& measure){
 
   //Build the JSON for sending
-  uint16_t json_size=1000;
+  //TODO: do a more accurate size count
+  size_t json_size=1000;
   char body_json[json_size];
-  snprintf(body_json,json_size,"{ \"timestamp\": \"%s\", \"value\":\"%f\", \"units\":\"%s\",\"measurement_type\":\"%s\", \ 
-  \"mac_addr\":\"%s\",\"device_id\":\"%s\",\"note\":\"%s\" }",measure.timestamp, measure.value, measure.units, measure.measurement_type,\
+  snprintf(body_json,json_size,"{ \"new_measure\": {\"timestamp\": \"%s\", \"measurement_value\":\"%f\", \"measurement_units\":\"%s\",\"measurement_type\":\"%s\",\
+  \"mac_addr\":\"%s\",\"device_id\":\"%s\",\"note\":\"%s\" }}",measure.timestamp, measure.value, measure.units, measure.measurement_type,\
   measure.mac_address,measure.device_id,measure.note);
 
   Serial.print("JSON OUT ");Serial.println(body_json);
+
+  //HTTP POST Headers etc.  using HTTP Client
+  HTTPClient http;
+
+  http.begin(route);
+  http.addHeader("Content-Type","application/json");
+//  http.addHeader("Content-Length",
+
+  
+  int httpResponseCode=http.POST(body_json);
+
+  if (httpResponseCode>0){
+    String response = http.getString();                       //Get the response to the request
+  
+    Serial.println(httpResponseCode);   //Print return code
+    Serial.println(response);           //Print request answer
+  
+   }else{
+  
+    Serial.print("Error on sending POST: ");
+    Serial.println(httpResponseCode);
+  
+   }
+  
+   http.end();  //Free resources
+    
+  
 
   return true; //if successful return true
 }
