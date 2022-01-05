@@ -27,9 +27,13 @@ void setup() {
   //Thsi example in measuring the voltage going in to the ADC, for example a battery voltage. 
   setMeasurement_MeasurementUnits(measurement_now,"V"); //for volts. if I was measuring say milivolts would use "mV", etc
   setMeasurement_DeviceID(measurement_now,"CIJEJAY0001"); //set this to somethign unique that you will be able to identify later.
-  setMeasurement_MeasurementType(measurement_now,"BATTERY");//again, this is for the user. If measure Temperature and battery, then need ot be able to differentiate
-  setMeasurement_MeasurementNote(measurement_now,"Testing for IOT Server"); //optional: include if want more info for later
+  setMeasurement_MeasurementType(measurement_now,"LDR");//again, this is for the user. If measure an LDR and battery, then need ot be able to differentiate
   setMeasurement_MacAddress(measurement_now,IOT_WiFi.getMACAddress());//MAC Address should be unique harware identifier for the board. Again helpful in identification 
+
+  //optional data
+  setMeasurement_Latitude(measurement_now, 40.70662827476518); //CIJE main office, from Google Maps
+  setMeasurement_Longitude(measurement_now,-74.01307855310544); //CIJE main office, from Google Maps
+  setMeasurement_MeasurementNote(measurement_now,"Testing for IOT Server"); //optional: include if want more info for later
   
 }
 

@@ -18,7 +18,8 @@ struct Measurement {
     char* ip_address;
     char* device_id;  // currently, this is self-identified. Use somehting that will be unique. 
     char* note; //OPTIONAL: any additional info that can be helpful in later analysis. 
-     
+    double latitude; //OPTIONAL location data
+    double longitude; // OPTIONAL location data
 };
 
 //set functions. you can set directly from the struct instance but included to help clarify/simplify
@@ -29,6 +30,8 @@ bool setMeasurement_DeviceID(Measurement& measure,char* device_id);
 bool setMeasurement_MeasurementType(Measurement& measure,char* measure_type);
 bool setMeasurement_MeasurementNote(Measurement& measure,char* note);
 bool setMeasurement_MacAddress(Measurement& measure,const char* mac_address);
+bool setMeasurement_Latitude(Measurement& measure, double latitude);
+bool setMeasurement_Longitude(Measurement& measure, double longitude);
 
 //post measurement JSON data to a server. The route must be configured to consume a POST statement
 bool postData2Server(const char* route, Measurement& measure);

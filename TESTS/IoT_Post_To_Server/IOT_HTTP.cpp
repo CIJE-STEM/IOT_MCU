@@ -60,6 +60,26 @@ bool setMeasurement_MacAddress(Measurement& measure,const char* mac_address){
   return true; 
 }
 
+bool setMeasurement_Latitude(Measurement& measure, double latitude){
+
+  if (false) {//placeholder for data checking
+    return false;
+    }
+
+  measure.latitude = latitude;
+  return true;
+}
+
+bool setMeasurement_Longitude(Measurement& measure, double longitude){
+  if (false) {//placeholder for data checking
+    return false;
+    }
+
+  measure.longitude = longitude;
+  return true;
+}
+
+
 bool postData2Server(const char* route, Measurement& measure){
 
   size_t json_size=1000;

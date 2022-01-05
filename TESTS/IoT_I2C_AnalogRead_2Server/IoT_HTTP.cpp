@@ -85,8 +85,8 @@ bool postData2Server(const char* route, Measurement& measure){
   size_t json_size=1000;
   char body_json[json_size];
   snprintf(body_json,json_size,"{ \"new_measure\": {\"timestamp\": \"%s\", \"measurement_value\":\"%f\", \"measurement_units\":\"%s\",\"measurement_type\":\"%s\",\
-  \"mac_addr\":\"%s\",\"device_id\":\"%s\",\"note\":\"%s\" }}",measure.timestamp, measure.value, measure.units, measure.measurement_type,\
-  measure.mac_address,measure.device_id,measure.note);
+  \"mac_addr\":\"%s\",\"device_id\":\"%s\",\"note\":\"%s\",\"latitude\":\"%f\",\"longitude\":\"%f\" }}",measure.timestamp, measure.value, measure.units, measure.measurement_type,\
+  measure.mac_address,measure.device_id,measure.note,measure.latitude,measure.longitude);
   
   
   Serial.print("JSON OUT ");Serial.println(body_json);
