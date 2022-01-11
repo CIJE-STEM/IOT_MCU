@@ -22,7 +22,7 @@ void setup() {
 }
 
 void loop() {
-  //use library getTime function to get UTC. Change to getLocalTime() if you want local time (as set by your compiling machine)
-  Serial.print("TIMESTAMP: ");Serial.println(IOT_WiFi.getTime()); //returns UTC time
+  //use library getTime function to get UTC. 
+  Serial.print("TIMESTAMP: ");Serial.println(IOT_WiFi.getTime());
   delay(1000);
 }
