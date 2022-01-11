@@ -8,6 +8,11 @@
 
 #define ANALOG_PIN 34
 
+const char* WIFI_SSID = "YOUR_SSID";
+const char* WIFI_PASSWORD = "YOUR_PASSWORD";
+
+const char* data_server = "https://cije-basic-iot-server.glitch.me/measurements/";
+
 IOT_WiFi IOT_WiFi; //initialize the IOT instance
 
 Measurement measurement_now; //this is a struct (defined in IoT_HTTP.h) that contains the fields to be sent to the DB
@@ -15,10 +20,11 @@ Measurement measurement_now; //this is a struct (defined in IoT_HTTP.h) that con
 void setup() {
  Serial.begin(115200);
 
- //Here we use the initWiFi() that assumes that SSID and PASSWORD have been stored on the board already
+ //You can use initWiFi() that assumes that SSID and PASSWORD have been stored on the board already
  //Use Utilities/preferences_mem_save/preferences_mem_save.ino in the library to do that.
- //Use initWiFi(const char* WIFI_SSID, const char* WIFI_PASSWORD) if don't want to save
-  IOT_WiFi.initWiFi();
+// If you have that stored on the board you can uncomment the line below, and comment out the IOT_WiFi.initWiFi(WIFI_SSID, WIFI_PASSWORD)
+// IOT_WiFi.initWiFi();
+  IOT_WiFi.initWiFi(WIFI_SSID, WIFI_PASSWORD);
   delay(1000);
   
   Serial.print("TIMESTAMP: ");Serial.println(IOT_WiFi.getTime()); //returns UTC time
@@ -55,6 +61,6 @@ void loop() {
   measurement_now.value=volts_now;
   
   //post the data
-  postData2Server("https://cije-basic-iot-server.glitch.me/measurements/",measurement_now);
+  postData2Server(data_server,measurement_now);
   delay(3000);
 }

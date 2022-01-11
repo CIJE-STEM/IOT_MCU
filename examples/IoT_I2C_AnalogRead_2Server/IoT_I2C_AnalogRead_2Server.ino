@@ -86,6 +86,7 @@ if (IOT_WiFi.isConnected()){
 
   postData2Server("https://cije-basic-iot-server.glitch.me/measurements/",measurement_now);
 
+  Serial.print("value: ");Serial.print(measurement_now.value);Serial.print(" latitude: "); Serial.print(measurement_now.latitude); Serial.print(" longitude: "); Serial.print(measurement_now.longitude); 
   //send humidity data
   setMeasurement_MeasurementUnits(measurement_now,"%"); 
   setMeasurement_MeasurementType(measurement_now,"Relative Humidity");//again, this is for the user. If measure Temperature and battery, then need ot be able to differentiate
