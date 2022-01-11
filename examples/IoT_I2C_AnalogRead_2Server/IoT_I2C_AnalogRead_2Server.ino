@@ -8,8 +8,8 @@
 #include "IoT_WiFi.h"
 #include "IoT_HTTP.h" //some helper functions for doing HTTP calls
 
-const char* WIFI_SSID="SpectrumSetup-58";
-const char* WIFI_PASSWORD="gentlegate811";
+const char* WIFI_SSID = "YOUR_SSID";
+const char* WIFI_PASSWORD = "YOUR_PASSWORD";
 
 IOT_WiFi IOT_WiFi; //initialize the IOT instance
 
